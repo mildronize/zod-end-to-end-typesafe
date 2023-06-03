@@ -10,7 +10,8 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "ui": "*"
+    "ui": "*",
+    "api": "*"
   },
   "devDependencies": {
     "tsconfig": "*",

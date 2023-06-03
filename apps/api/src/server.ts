@@ -5,12 +5,6 @@ import cors from "cors";
 import { z } from "zod";
 import { getUserhandler } from "./users";
 
-// -----
-
-const userSchema = z.object({
-  name: z.string(),
-});
-
 export const createServer = () => {
   const app = express();
   app
@@ -18,6 +12,9 @@ export const createServer = () => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
+    .get("/", (req, res) => {
+      return res.json({ message: "hello world" });
+    })
     // .use(errorResponder)
     .get("/message/:name", (req, res) => {
       return res.json({ message: `hello ${req.params.name}` });
@@ -29,3 +26,10 @@ export const createServer = () => {
 
   return app;
 };
+
+const port = process.env.PORT || 3001;
+const server = createServer();
+
+server.listen(port, () => {
+  console.log(`api running on http://localhost:${port}/`);
+});

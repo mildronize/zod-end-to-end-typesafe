@@ -2,12 +2,14 @@
   "name": "api",
   "version": "0.0.0",
   "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "nodemon --exec \"node -r esbuild-register ./src/index.ts\" -e .ts",
+    "dev": "nodemon --exec \"node -r esbuild-register ./src/server.ts\" -e .ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\"",
-    "start": "node -r esbuild-register ./src/index.ts"
+    "start": "node -r esbuild-register ./src/server.ts"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

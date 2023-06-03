@@ -1,12 +1,9 @@
-import { createServer } from "./server";
+import type { GetUserType as _GetUserType } from './users';
+export type { HandlerSchema } from "./route-utils";
 
-const port = process.env.PORT || 3001;
-const server = createServer();
-
-import type { Type } from "ui";
-const type: Type = "todo";
-console.log(type);
-
-server.listen(port, () => {
-  console.log(`api running on http://localhost:${port}/`);
-});
+export namespace Server {
+  export type GetUser = _GetUserType
+}
+// export type RequestSchema = {
+//   response?: string;
+// }

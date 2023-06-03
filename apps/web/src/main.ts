@@ -2,9 +2,33 @@ import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import { Header, Counter, setupCounter } from "ui";
 
-import type { Type } from "ui";
-const type: Type = "todo";
-console.log(type);
+import type { Server, HandlerSchema } from "api";
+
+async function getData<T extends HandlerSchema<any, any>>(method: string,url: string, requestOption: T['request']): Promise<T['response']> {
+  const data = await fetch(url, {
+    method,
+    body: JSON.stringify(requestOption.body), 
+  });
+  return data.json();
+}
+
+async function main(){
+  const data = await getData<Server.GetUser>('POST', '/api/users', {
+    body: {
+      id: '1',
+    },
+    query: {
+      pageId: 1,
+    },
+    param: {
+      name: '1',
+    },
+  });
+  console.log(data);
+}
+
+main();
+
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
