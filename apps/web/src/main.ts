@@ -2,6 +2,10 @@ import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import { Header, Counter, setupCounter } from "ui";
 
+import type { Type } from "ui";
+const type: Type = "todo";
+console.log(type);
+
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <a href="https://vitejs.dev" target="_blank">
