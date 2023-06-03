@@ -21,29 +21,27 @@ export function createHandlerSchema<
   return object;
 }
 
-export type InferOrUndefined<T> = T extends undefined
-  ? undefined
-  : T extends z.ZodTypeAny
+export type SafeZodInfer<T> = T extends z.ZodTypeAny
   ? z.infer<T>
   : undefined;
 
-export type InferType<
-  HandlerSchema extends { request: RequestSchema; response: z.ZodTypeAny }
+export type InferHandlerSchema<
+  TSchema extends HandlerSchema<any, any>
 > = {
   request: {
-    body: InferOrUndefined<HandlerSchema["request"]["body"]>;
-    query: InferOrUndefined<HandlerSchema["request"]["query"]>;
-    param: InferOrUndefined<HandlerSchema["request"]["param"]>;
+    body: SafeZodInfer<TSchema["request"]["body"]>;
+    query: SafeZodInfer<TSchema["request"]["query"]>;
+    param: SafeZodInfer<TSchema["request"]["param"]>;
   };
-  response: z.infer<HandlerSchema["response"]>;
+  response: z.infer<TSchema["response"]>;
 };
 
 
 export function createHandler<
-  Schema extends HandlerSchema<any, any>
+  TSchema extends HandlerSchema<any, any>
 >(handler: (
-  req: express.Request<InferType<Schema>["request"]["param"], any, InferType<Schema>["request"]["body"], InferType<Schema>["request"]["query"]>,
-  res: express.Response<InferType<Schema>["response"]>)
+  req: express.Request<InferHandlerSchema<TSchema>["request"]["param"], any, InferHandlerSchema<TSchema>["request"]["body"], InferHandlerSchema<TSchema>["request"]["query"]>,
+  res: express.Response<InferHandlerSchema<TSchema>["response"]>)
   => void
 ) {
   return handler;

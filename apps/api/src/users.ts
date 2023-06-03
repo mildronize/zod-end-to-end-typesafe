@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { InferType, createHandler, createHandlerSchema } from "./route-utils";
+import { InferHandlerSchema, createHandler, createHandlerSchema } from "./route-utils";
 
 const getUser = createHandlerSchema({
   request: {
@@ -22,7 +22,7 @@ const getUser = createHandlerSchema({
   }),
 });
 
-export type GetUserType = InferType<typeof getUser>;
+export type GetUserType = InferHandlerSchema<typeof getUser>;
 
 export const getUserhandler = createHandler<typeof getUser>((req, res) => {
   const name = req.params.name;
