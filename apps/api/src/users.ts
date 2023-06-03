@@ -1,25 +1,5 @@
 import { z } from "zod";
-import express from "express";
-
-type RequestSchema = {
-  body?: z.ZodTypeAny;
-  query?: z.ZodTypeAny;
-  param?: z.ZodTypeAny;
-};
-
-type HandlerSchema<
-  Request extends RequestSchema,
-  Response extends z.ZodTypeAny
-> = {
-  request: Request;
-  response: Response;
-};
-function createHandlerSchema<
-  Request extends RequestSchema,
-  Response extends z.ZodTypeAny
->(object: HandlerSchema<Request, Response>) {
-  return object;
-}
+import { InferType, createHandler, createHandlerSchema } from "./route-utils";
 
 const getUser = createHandlerSchema({
   request: {
@@ -42,38 +22,10 @@ const getUser = createHandlerSchema({
   }),
 });
 
-type InferOrUndefined<T> = T extends undefined
-  ? undefined
-  : T extends z.ZodTypeAny
-  ? z.infer<T>
-  : undefined;
-
-type InferType<
-  HandlerSchema extends { request: RequestSchema; response: z.ZodTypeAny }
-> = {
-  request: {
-    body: InferOrUndefined<HandlerSchema["request"]["body"]>;
-    query: InferOrUndefined<HandlerSchema["request"]["query"]>;
-    param: InferOrUndefined<HandlerSchema["request"]["param"]>;
-  };
-  response: z.infer<HandlerSchema["response"]>;
-};
-
-type GetUserType = InferType<typeof getUser>;
-
-function createHandler<
-  Schema extends HandlerSchema<any, any>
->(handler: (
-  req: express.Request<InferType<Schema>["request"]["param"], any, InferType<Schema>["request"]["body"], InferType<Schema>["request"]["query"]>,
-  res: express.Response<InferType<Schema>["response"]>)
-  => void
-) {
-  return handler;
-}
+export type GetUserType = InferType<typeof getUser>;
 
 export const getUserhandler = createHandler<typeof getUser>((req, res) => {
   const name = req.params.name;
-  // const a = req.params.
   const id = req.body.id;
   const pageId = req.query.pageId;
   res.json({ message: "ok", name, id, pageId });
