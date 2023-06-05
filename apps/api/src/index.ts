@@ -1,9 +1,6 @@
 import type { GetUserType as _GetUserType } from './users';
-export type { HandlerSchema } from "./route-utils";
+export type { HandlerSchema, RequestSchema, HandlerSchema2 } from "./route-utils";
 
-export namespace Server {
+export namespace AppRouter {
   export type GetUser = _GetUserType
 }
-// export type RequestSchema = {
-//   response?: string;
-// }

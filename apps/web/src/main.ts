@@ -2,18 +2,19 @@ import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import { Header, Counter, setupCounter } from "ui";
 
-import type { Server, HandlerSchema } from "api";
+import type { AppRouter, HandlerSchema, HandlerSchema2, RequestSchema } from "api";
 
-async function getData<T extends HandlerSchema<any, any>>(method: string,url: string, requestOption: T['request']): Promise<T['response']> {
+async function getData<T extends HandlerSchema2>(method: T['method'], url: T['path'], requestOption: T['request']): Promise<T['response']> {
+  const body = requestOption.body ? JSON.stringify(requestOption.body) : undefined;
   const data = await fetch(url, {
     method,
-    body: JSON.stringify(requestOption.body), 
+    body
   });
   return data.json();
 }
 
-async function main(){
-  const data = await getData<Server.GetUser>('POST', '/api/users', {
+async function main() {
+  const data = await getData<AppRouter.GetUser>('post', '/users/:name', {
     body: {
       id: '1',
     },
@@ -21,7 +22,7 @@ async function main(){
       pageId: 1,
     },
     param: {
-      name: '1',
+      name: '1'
     },
   });
   console.log(data);

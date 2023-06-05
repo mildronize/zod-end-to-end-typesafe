@@ -1,6 +1,8 @@
 import { z } from "zod";
 import express from "express";
 
+type Method = "get" | "post" | "put" | "delete";
+
 export type RequestSchema = {
   body?: z.ZodTypeAny;
   query?: z.ZodTypeAny;
@@ -8,16 +10,23 @@ export type RequestSchema = {
 };
 
 export type HandlerSchema<
-  Request extends RequestSchema,
-  Response extends z.ZodTypeAny
+  TRequest extends RequestSchema,
+  TResponse extends z.ZodTypeAny,
+  TPath extends string,
+  TMethod extends Method,
 > = {
-  request: Request;
-  response: Response;
+  method: TMethod;
+  path: TPath;
+  request: TRequest;
+  response: TResponse;
 };
+
 export function createHandlerSchema<
-  Request extends RequestSchema,
-  Response extends z.ZodTypeAny
->(object: HandlerSchema<Request, Response>) {
+  TRequest extends RequestSchema,
+  TResponse extends z.ZodTypeAny,
+  TPath extends string,
+  TMethod extends Method,
+>(object: HandlerSchema<TRequest, TResponse, TPath, TMethod>) {
   return object;
 }
 
@@ -26,8 +35,10 @@ export type SafeZodInfer<T> = T extends z.ZodTypeAny
   : undefined;
 
 export type InferHandlerSchema<
-  TSchema extends HandlerSchema<any, any>
+  TSchema extends HandlerSchema<any, any, any, any>
 > = {
+  method: TSchema["method"];
+  path: TSchema["path"];
   request: {
     body: SafeZodInfer<TSchema["request"]["body"]>;
     query: SafeZodInfer<TSchema["request"]["query"]>;
@@ -36,13 +47,47 @@ export type InferHandlerSchema<
   response: z.infer<TSchema["response"]>;
 };
 
+export type HandlerSchema2 = {
+  path: string,
+  method: Method,
+  request: {
+    body?: unknown,
+    query?: unknown,
+    param?: unknown,
+  },
+  response: unknown
+};
 
-export function createHandler<
-  TSchema extends HandlerSchema<any, any>
->(handler: (
+type Handler<TSchema extends HandlerSchema<any, any, any, any>> = (
   req: express.Request<InferHandlerSchema<TSchema>["request"]["param"], any, InferHandlerSchema<TSchema>["request"]["body"], InferHandlerSchema<TSchema>["request"]["query"]>,
   res: express.Response<InferHandlerSchema<TSchema>["response"]>)
-  => void
+  => void;
+
+export function createHandler<
+  TSchema extends HandlerSchema<any, any, any, any>
+>(handler: Handler<TSchema>
 ) {
   return handler;
+}
+
+export function registerRouter<
+  TSchema extends HandlerSchema<any, any, any, any>
+>(router: express.Router, method: TSchema["method"], path: TSchema["path"], handler: Handler<TSchema>
+) {
+  switch (method) {
+    case 'get':
+      router.get(path, handler);
+      break;
+    case 'post':
+      router.post(path, handler);
+      break;
+    case 'put':
+      router.put(path, handler);
+      break;
+    case 'delete':
+      router.delete(path, handler);
+      break;
+    default:
+      throw new Error('method not supported');
+  }
 }
