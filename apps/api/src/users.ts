@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { InferHandlerSchema, createHandler, createHandlerSchema } from "./route-utils";
+import { createHandler, createRouterSchema } from "./route-utils";
 
-export const getUser = createHandlerSchema({
+export const getUserSchema = createRouterSchema({
   request: {
     body: z.object({
       id: z.string(),
@@ -23,9 +23,7 @@ export const getUser = createHandlerSchema({
   method: "post",
 });
 
-export type GetUserType = InferHandlerSchema<typeof getUser>;
-
-export const getUserhandler = createHandler<typeof getUser>((req, res) => {
+export const getUserhandler = createHandler<typeof getUserSchema>((req, res) => {
   const name = req.params.name;
   const id = req.body.id;
   const pageId = req.query.pageId;

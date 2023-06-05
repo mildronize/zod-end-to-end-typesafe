@@ -1,20 +1,11 @@
 import "./style.css";
 import typescriptLogo from "./typescript.svg";
 import { Header, Counter, setupCounter } from "ui";
-
-import type { AppRouter, HandlerSchema, HandlerSchema2, RequestSchema } from "api";
-
-async function getData<T extends HandlerSchema2>(method: T['method'], url: T['path'], requestOption: T['request']): Promise<T['response']> {
-  const body = requestOption.body ? JSON.stringify(requestOption.body) : undefined;
-  const data = await fetch(url, {
-    method,
-    body
-  });
-  return data.json();
-}
+import { getData } from "./router-helper";
+import type { AppRouter } from "api";
 
 async function main() {
-  const data = await getData<AppRouter.GetUser>('post', '/users/:name', {
+  const data = await getData<AppRouter["GetUser"]>('post', '/users/:name', {
     body: {
       id: '1',
     },
@@ -25,7 +16,7 @@ async function main() {
       name: '1'
     },
   });
-  console.log(data);
+  console.log(data.message);
 }
 
 main();
