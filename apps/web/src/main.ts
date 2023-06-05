@@ -14,7 +14,7 @@ async function main() {
     },
     param: {
       name: '1'
-    },
+    }
   });
   console.log(data.message);
 }
