@@ -21,13 +21,13 @@ export type RouterSchema<
   response: TResponse;
 };
 
-export type AnyRouterSchema = RouterSchema<any, any, any, any>;
+export type AnyRouterSchema = RouterSchema<RequestSchema, z.ZodTypeAny, any, any>;
 
-export function createBaseResponseSchema<TSchema extends z.ZodTypeAny>(data: TSchema){
+export function createBaseResponseSchema<TSchema extends z.ZodTypeAny>(data: TSchema) {
   return z.object({
     success: z.boolean(),
     message: z.string(),
-    data
+    data,
   });
 }
 
@@ -85,20 +85,21 @@ export function registerRouter<TSchema extends AnyRouterSchema>(
   router: express.Router,
   method: TSchema['method'],
   path: TSchema['path'],
-  handler: Handler<TSchema>
+  handler: Handler<TSchema>,
+  ...middlewares: any[]
 ) {
   switch (method) {
     case 'get':
-      router.get(path, handler);
+      router.get(path, middlewares, handler);
       break;
     case 'post':
-      router.post(path, handler);
+      router.post(path, middlewares, handler);
       break;
     case 'put':
-      router.put(path, handler);
+      router.put(path, middlewares, handler);
       break;
     case 'delete':
-      router.delete(path, handler);
+      router.delete(path, middlewares, handler);
       break;
     default:
       throw new Error('method not supported');
