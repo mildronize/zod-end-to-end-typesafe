@@ -5,7 +5,7 @@ import { getData } from './router-helper';
 import type { AppRouter } from 'api';
 
 async function main() {
-  const data = await getData<AppRouter['GetUser']>('post', '/users/:name', {
+  const responseData = await getData<AppRouter['GetUser']>('post', '/users/:name', {
     body: {
       id: '1',
     },
@@ -16,7 +16,7 @@ async function main() {
       name: '1',
     },
   });
-  console.log(data.message);
+  console.log(responseData.success);
 }
 
 main();

@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { createHandler, createRouterSchema } from './route-utils';
 
+
+
 export const getUserSchema = createRouterSchema({
   request: {
     body: z.object({
@@ -14,7 +16,6 @@ export const getUserSchema = createRouterSchema({
     }),
   },
   response: z.object({
-    message: z.string(),
     name: z.string(),
     id: z.string(),
     pageId: z.number(),
@@ -27,7 +28,7 @@ export const getUserhandler = createHandler<typeof getUserSchema>((req, res) => 
   const name = req.params.name;
   const id = req.body.id;
   const pageId = req.query.pageId;
-  res.json({ message: 'ok', name, id, pageId });
+  res.json({ success: true, message: "ok", data: { name, id, pageId } });
 });
 
 // export const getUserhandler = (

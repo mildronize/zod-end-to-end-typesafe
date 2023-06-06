@@ -23,13 +23,24 @@ export type RouterSchema<
 
 export type AnyRouterSchema = RouterSchema<any, any, any, any>;
 
+function createBaseResponseSchema<TSchema extends z.ZodTypeAny>(data: TSchema){
+  return z.object({
+    success: z.boolean(),
+    message: z.string(),
+    data
+  });
+}
+
 export function createRouterSchema<
   TRequest extends RequestSchema,
   TResponse extends z.ZodTypeAny,
   TPath extends string,
   TMethod extends Method
 >(object: { method: TMethod; path: TPath; request: TRequest; response: TResponse }) {
-  return object;
+  return {
+    ...object,
+    response: createBaseResponseSchema(object.response),
+  };
 }
 
 export type SafeZodInfer<T> = T extends z.ZodTypeAny ? z.infer<T> : undefined;
