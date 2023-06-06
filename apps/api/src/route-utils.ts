@@ -23,7 +23,7 @@ export type RouterSchema<
 
 export type AnyRouterSchema = RouterSchema<any, any, any, any>;
 
-function createBaseResponseSchema<TSchema extends z.ZodTypeAny>(data: TSchema){
+export function createBaseResponseSchema<TSchema extends z.ZodTypeAny>(data: TSchema){
   return z.object({
     success: z.boolean(),
     message: z.string(),
