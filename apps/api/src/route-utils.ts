@@ -1,7 +1,7 @@
-import { z } from "zod";
-import express from "express";
+import { z } from 'zod';
+import express from 'express';
 
-type Method = "get" | "post" | "put" | "delete";
+type Method = 'get' | 'post' | 'put' | 'delete';
 
 export type RequestSchema = {
   body?: z.ZodTypeAny;
@@ -13,7 +13,7 @@ export type RouterSchema<
   TRequest extends RequestSchema,
   TResponse extends z.ZodTypeAny,
   TPath extends string,
-  TMethod extends Method,
+  TMethod extends Method
 > = {
   method: TMethod;
   path: TPath;
@@ -27,60 +27,54 @@ export function createRouterSchema<
   TRequest extends RequestSchema,
   TResponse extends z.ZodTypeAny,
   TPath extends string,
-  TMethod extends Method,
->(object: {
-  method: TMethod;
-  path: TPath;
-  request: TRequest;
-  response: TResponse;
-}) {
+  TMethod extends Method
+>(object: { method: TMethod; path: TPath; request: TRequest; response: TResponse }) {
   return object;
 }
 
-export type SafeZodInfer<T> = T extends z.ZodTypeAny
-  ? z.infer<T>
-  : undefined;
+export type SafeZodInfer<T> = T extends z.ZodTypeAny ? z.infer<T> : undefined;
 
-export type InferRouterSchema<
-  TSchema extends AnyRouterSchema
-> = {
-  method: TSchema["method"];
-  path: TSchema["path"];
+export type InferRouterSchema<TSchema extends AnyRouterSchema> = {
+  method: TSchema['method'];
+  path: TSchema['path'];
   request: {
-    body: SafeZodInfer<TSchema["request"]["body"]>;
-    query: SafeZodInfer<TSchema["request"]["query"]>;
-    param: SafeZodInfer<TSchema["request"]["param"]>;
+    body: SafeZodInfer<TSchema['request']['body']>;
+    query: SafeZodInfer<TSchema['request']['query']>;
+    param: SafeZodInfer<TSchema['request']['param']>;
   };
-  response: z.infer<TSchema["response"]>;
+  response: z.infer<TSchema['response']>;
 };
 
 export type AnyRouter = {
-  path: string,
-  method: string,
+  path: string;
+  method: string;
   request: {
-    body?: Record<string, any>,
-    query?: Record<string, any>,
-    param?: Record<string, any>,
-  },
-  response: unknown
+    body?: Record<string, any>;
+    query?: Record<string, any>;
+    param?: Record<string, any>;
+  };
+  response: unknown;
 };
 
-
 type Handler<TSchema extends AnyRouterSchema> = (
-  req: express.Request<InferRouterSchema<TSchema>["request"]["param"], any, InferRouterSchema<TSchema>["request"]["body"], InferRouterSchema<TSchema>["request"]["query"]>,
-  res: express.Response<InferRouterSchema<TSchema>["response"]>)
-  => void;
+  req: express.Request<
+    InferRouterSchema<TSchema>['request']['param'],
+    any,
+    InferRouterSchema<TSchema>['request']['body'],
+    InferRouterSchema<TSchema>['request']['query']
+  >,
+  res: express.Response<InferRouterSchema<TSchema>['response']>
+) => void;
 
-export function createHandler<
-  TSchema extends AnyRouterSchema
->(handler: Handler<TSchema>
-) {
+export function createHandler<TSchema extends AnyRouterSchema>(handler: Handler<TSchema>) {
   return handler;
 }
 
-export function registerRouter<
-  TSchema extends AnyRouterSchema
->(router: express.Router, method: TSchema["method"], path: TSchema["path"], handler: Handler<TSchema>
+export function registerRouter<TSchema extends AnyRouterSchema>(
+  router: express.Router,
+  method: TSchema['method'],
+  path: TSchema['path'],
+  handler: Handler<TSchema>
 ) {
   switch (method) {
     case 'get':

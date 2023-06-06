@@ -6,13 +6,12 @@ const router = express.Router();
 
 registerRouter<typeof getUserSchema>(router, 'post', '/users/:name', getUserhandler);
 
-router.get("/", (req, res) => {
-  return res.json({ message: "hello world" });
+router.get('/', (req, res) => {
+  return res.json({ message: 'hello world' });
 });
 
 export type AppRouter = {
   GetUser: InferRouterSchema<typeof getUserSchema>;
-}
-
+};
 
 export default router;
