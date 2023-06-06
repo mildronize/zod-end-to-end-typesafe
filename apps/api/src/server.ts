@@ -3,6 +3,7 @@ import express, { Handler } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import router from './router';
+import { globalErrorHanlder } from './middlewares/global-error-handler';
 
 export const createServer = () => {
   const app = express();
@@ -11,7 +12,8 @@ export const createServer = () => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
-    .use('/', router);
+    .use('/', router)
+    .use(globalErrorHanlder);
   // .get("/", (req, res) => {
   //   return res.json({ message: "hello world" });
   // })
